@@ -27,25 +27,27 @@ RUN apt-get update && apt-get install -y \
 # Set Python 3.10 as the default Python version
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 
-# Upgrade pip
+# Upgrade pip and install JupyterLab
 RUN python3.10 -m pip install --upgrade pip
+RUN pip install jupyterlab
 
-# Set working directory
-WORKDIR /opt
-
-# Clone the required version of Mitsuba (v3.5.2) and Dr.Jit
-RUN git clone --recursive https://github.com/mitsuba-renderer/mitsuba3.git --branch v3.5.2
+# Clone the required version of Mitsuba (v3.5.2) and ensure submodules are initialized
+RUN git clone --recursive https://github.com/mitsuba-renderer/mitsuba3.git --branch v3.5.2 /opt/mitsuba3
 
 # Set working directory to Mitsuba
 WORKDIR /opt/mitsuba3
 
-# Build Mitsuba with CMake using Ninja
-RUN mkdir build && cd build && \
-    cmake -GNinja -DPython_EXECUTABLE=/usr/bin/python3.10 -DPython_INCLUDE_DIR=/usr/include/python3.10 -DPython_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.10.so .. && \
-    ninja
+# Ensure submodules are initialized and updated
+RUN git submodule update --init --recursive
 
-# Configure Mitsuba with the correct variant
-RUN sed -i 's/\"scalar_rgb\"/\"cuda_ad_mono_polarized\"/g' build/mitsuba.conf
+# Configure Mitsuba with CMake to generate the mitsuba.conf file
+RUN mkdir build && cd build && cmake -GNinja ..
+
+# Modify the mitsuba.conf file to enable the 'cuda_ad_mono_polarized' variant
+RUN sed -i 's/"enabled": \[/"enabled": \["cuda_ad_mono_polarized", /' build/mitsuba.conf
+
+# Build Mitsuba with Ninja after modifying the configuration
+RUN cd build && ninja
 
 # Source the setpath.sh script to configure environment variables
 RUN echo "source /opt/mitsuba3/build/setpath.sh" >> ~/.bashrc

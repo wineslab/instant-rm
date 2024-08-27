@@ -41,6 +41,67 @@ the help of [Blender](https://www.blender.org) and the [Blender-OSM](https://git
 and [Mitsuba Blender](https://github.com/mitsuba-renderer/mitsuba-blender) add-ons.
 The data is licensed under the [Open Data Commons Open Database License (ODbL)](https://openstreetmap.org/copyright).
 
+# Docker 
+
+
+# Running Docker Container with OptiX and Jupyter Notebook
+
+This guide explains how to run a Docker container in detached mode with NVIDIA OptiX, Jupyter Notebook, and Mitsuba. It also shows how to configure the container to print the Jupyter Notebook token after being started, allowing you to access the notebook even when the container is run in detached mode.
+
+## Prerequisites
+
+- **NVIDIA GPU** with CUDA support
+- **Docker** with the NVIDIA Container Toolkit installed
+- **Ubuntu or other Linux-based system**
+- **OptiX SDK** installed on the host system
+
+## Steps to Set Up
+
+### 1. Run the Container in Detached Mode with Host Networking
+
+To run the container in detached mode and expose Jupyter Notebook on the host network, use the following command:
+
+```bash
+sudo docker run \
+    -d \
+    --network host \
+    -v /usr/lib/x86_64-linux-gnu/libnvoptix.so.1:/usr/lib/x86_64-linux-gnu/libnvoptix.so.1 \
+    -v /usr/lib/x86_64-linux-gnu/libnvoptix.so.418.56:/usr/lib/x86_64-linux-gnu/libnvoptix.so.418.56 \
+    -v /usr/lib/x86_64-linux-gnu/libnvidia-rtcore.so.418.56:/usr/lib/x86_64-linux-gnu/libnvidia-rtcore.so.418.56 \
+    --gpus all \
+    --name instant-rm-container \
+    instant-rm
+```
+
+### 2. Retrieve the Jupyter Notebook Token
+
+Since the container is running in detached mode, you can access the token by checking the logs. Use the following command to retrieve the token:
+
+```bash
+sudo docker logs instant-rm-container
+```
+
+This command will print the output from the container's startup script, which includes the Jupyter Notebook token.
+
+### 3. Access Jupyter Notebook
+
+Once you have the token, you can access Jupyter Notebook by navigating to `http://localhost:8888` in your browser and entering the token when prompted.
+
+## Example Commands
+
+- **Start the container in detached mode**:
+  ```bash
+  sudo docker run -d --network host --gpus all --name instant-rm-container instant-rm
+  ```
+
+- **Retrieve the Jupyter Notebook token**:
+  ```bash
+  sudo docker logs instant-rm-container
+  ```
+
+This guide will help you run and manage the containerized environment for NVIDIA OptiX, Mitsuba, and Jupyter Notebook with ease.
+
+
 # Installation
 
 Instant RM is based on [Mitsuba 3](https://mitsuba.readthedocs.io/en/latest/) and
