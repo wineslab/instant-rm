@@ -30,6 +30,7 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 # Upgrade pip and install JupyterLab
 RUN python3.10 -m pip install --upgrade pip
 RUN pip install jupyterlab
+RUN pip install ipywidgets
 
 # Clone the required version of Mitsuba (v3.5.2) and ensure submodules are initialized
 RUN git clone --recursive https://github.com/mitsuba-renderer/mitsuba3.git --branch v3.5.2 /opt/mitsuba3
