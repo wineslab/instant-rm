@@ -51,8 +51,6 @@ RUN cd build && ninja
 
 # Source the setpath.sh script to configure environment variables
 RUN echo "source /opt/mitsuba3/build/setpath.sh" >> ~/.bashrc
-
-# Set up environment for Mitsuba and Dr.Jit for running JupyterLab
 ENV PYTHONPATH="/opt/mitsuba3/build/python:$PYTHONPATH"
 ENV PATH="/opt/mitsuba3/build/bin:$PATH"
 
@@ -63,8 +61,6 @@ WORKDIR /opt/instant-rm
 RUN pip install -r requirements.txt
 RUN pip install .
 
-# Expose JupyterLab port
+#JupyterLab
 EXPOSE 8888
-
-# Command to start JupyterLab
-CMD ["bash", "-c", "source /opt/mitsuba3/build/setpath.sh && jupyter lab --ip=0.0.0.0 --allow-root"]
+CMD ["bash", "-c", "source /opt/mitsuba3/build/setpath.sh && jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.token='' --NotebookApp.allow_origin='*'"]

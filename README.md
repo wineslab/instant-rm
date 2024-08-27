@@ -57,49 +57,30 @@ This guide explains how to run a Docker container in detached mode with NVIDIA O
 
 ## Steps to Set Up
 
+### 1. Build the Docker Image 
+Clone this directory and in this directory try: 
+```bash
+docker build -t instant-rm .
+```
+
 ### 1. Run the Container in Detached Mode with Host Networking
 
 To run the container in detached mode and expose Jupyter Notebook on the host network, use the following command:
 
 ```bash
-sudo docker run \
+docker run \
     -d \
     --network host \
-    -v /usr/lib/x86_64-linux-gnu/libnvoptix.so.1:/usr/lib/x86_64-linux-gnu/libnvoptix.so.1 \
-    -v /usr/lib/x86_64-linux-gnu/libnvoptix.so.418.56:/usr/lib/x86_64-linux-gnu/libnvoptix.so.418.56 \
-    -v /usr/lib/x86_64-linux-gnu/libnvidia-rtcore.so.418.56:/usr/lib/x86_64-linux-gnu/libnvidia-rtcore.so.418.56 \
+    --privileged=true \ 
     --gpus all \
+    --env NVIDIA_DRIVER_CAPABILITIES=graphics,compute,utility
     --name instant-rm-container \
     instant-rm
 ```
 
-### 2. Retrieve the Jupyter Notebook Token
+### 2. Access Jupyter Notebook
 
-Since the container is running in detached mode, you can access the token by checking the logs. Use the following command to retrieve the token:
-
-```bash
-sudo docker logs instant-rm-container
-```
-
-This command will print the output from the container's startup script, which includes the Jupyter Notebook token.
-
-### 3. Access Jupyter Notebook
-
-Once you have the token, you can access Jupyter Notebook by navigating to `http://localhost:8888` in your browser and entering the token when prompted.
-
-## Example Commands
-
-- **Start the container in detached mode**:
-  ```bash
-  sudo docker run -d --network host --gpus all --name instant-rm-container instant-rm
-  ```
-
-- **Retrieve the Jupyter Notebook token**:
-  ```bash
-  sudo docker logs instant-rm-container
-  ```
-
-This guide will help you run and manage the containerized environment for NVIDIA OptiX, Mitsuba, and Jupyter Notebook with ease.
+You can access Jupyter Notebook by navigating to `http://localhost:8888` in your browser and entering the token when prompted.
 
 
 # Installation
