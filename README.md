@@ -68,14 +68,7 @@ docker build -t instant-rm .
 To run the container in detached mode and expose Jupyter Notebook on the host network, use the following command:
 
 ```bash
-docker run \
-    -d \
-    --network host \
-    --privileged=true \ 
-    --gpus all \
-    --env NVIDIA_DRIVER_CAPABILITIES=graphics,compute,utility
-    --name instant-rm-container \
-    instant-rm
+docker run -d --network host --privileged=true --gpus all --env NVIDIA_DRIVER_CAPABILITIES=graphics,compute,utility  --name instant-rm-container instant-rm
 ```
 
 ### 2. Access Jupyter Notebook
